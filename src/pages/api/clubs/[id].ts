@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { deleteClub, updateClub, getClub } from '../../../lib/db/models/club';
+import { clubModel } from '../../../lib/db/models/club';
 
 export const PUT: APIRoute = async ({ params, request }) => {
   try {
@@ -13,7 +13,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
       });
     }
 
-    const club = getClub(id);
+    const club = await clubModel.getById(id);
     if (!club) {
       return new Response(JSON.stringify({ error: 'Club not found' }), {
         status: 404,
@@ -22,7 +22,7 @@ export const PUT: APIRoute = async ({ params, request }) => {
     }
 
     const updates = await request.json();
-    const result = updateClub(id, updates);
+    const result = await clubModel.update(id, updates);
     
     if (!result) {
       return new Response(JSON.stringify({ error: 'Club not found' }), {
@@ -58,7 +58,7 @@ export const DELETE: APIRoute = async ({ params }) => {
       });
     }
 
-    const result = deleteClub(id);
+    const result = await clubModel.delete(id);
     
     if (!result) {
       return new Response(JSON.stringify({ error: 'Club not found' }), {
