@@ -6,15 +6,22 @@ const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.error('Missing Supabase environment variables');
 }
 
 // Create Supabase client
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient<Database>(
+  supabaseUrl || '',
+  supabaseAnonKey || ''
+);
 
 // Initialize database and verify connection
 export const initDb = async () => {
   try {
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase environment variables');
+    }
+
     // Test connection
     const { data, error } = await supabase
       .from('clubs')
@@ -51,7 +58,8 @@ export const initDb = async () => {
           lost: 0,
           goals_for: 0,
           goals_against: 0,
-          points: 0
+          points: 0,
+          is_mcdo_pool: true
         });
       
       if (insertError) throw insertError;
@@ -60,6 +68,6 @@ export const initDb = async () => {
     return true;
   } catch (error) {
     console.error('Failed to initialize database:', error);
-    throw error;
+    return false;
   }
 };

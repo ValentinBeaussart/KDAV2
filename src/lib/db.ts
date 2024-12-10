@@ -1,7 +1,11 @@
 import { initDb, supabase } from './db/connection';
 
 // Initialize the database
-await initDb();
+try {
+  await initDb();
+} catch (error) {
+  console.error('Database initialization failed:', error);
+}
 
 // Export everything from the database modules
 export * from './db/types';
