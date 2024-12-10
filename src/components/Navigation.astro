@@ -1,12 +1,12 @@
 ---
 const navItems = [
-  { label: 'Accueil', path: '/' },
-  { label: 'À propos', path: '/a-propos' },
-  { label: 'Équipe', path: '/equipe' },
-  { label: 'Calendrier', path: '/calendrier' },
-  { label: 'Classement', path: '/classement' },
-  { label: 'Galerie', path: '/galerie' },
-  { label: 'Admin', path: '/admin' } // Added admin link
+  { label: "Accueil", path: "/" },
+  { label: "À propos", path: "/a-propos" },
+  { label: "Équipe", path: "/equipe" },
+  { label: "Calendrier", path: "/calendrier" },
+  { label: "Classement", path: "/classement" },
+  { label: "Galerie", path: "/galerie" },
+  // { label: "Admin", path: "/admin" },
 ];
 ---
 
@@ -15,39 +15,40 @@ const navItems = [
     <div class="container mx-auto">
       <div class="flex justify-between items-center p-4">
         <a href="/" class="text-xl font-bold text-white">KDA SPORTING CLUB</a>
-        
+
         <!-- Desktop menu -->
-        <ul class="hidden md:flex space-x-6">
-          {navItems.map(item => (
-            <li>
-              <a 
-                href={item.path}
-                class="text-white px-4 py-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-white/20 hover:to-white/30"
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
+        <ul class="hidden md:flex space-x-1">
+          {
+            navItems.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class="text-white px-4 py-2 rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-white/20 hover:to-white/30"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
         </ul>
 
         <!-- Mobile menu button -->
-        <button 
+        <button
           id="menuButton"
           class="md:hidden text-white focus:outline-none"
           aria-label="Menu"
         >
-          <svg 
-            class="w-6 h-6" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              stroke-linecap="round" 
-              stroke-linejoin="round" 
-              stroke-width="2" 
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
@@ -55,98 +56,99 @@ const navItems = [
   </div>
 
   <!-- Mobile menu -->
-  <div 
-    id="mobileMenu" 
+  <div
+    id="mobileMenu"
     class="hidden md:hidden fixed inset-y-0 right-0 w-64 bg-primary shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-50"
   >
     <div class="p-6">
-      <button 
+      <button
         id="closeButton"
         class="absolute top-4 right-4 text-white focus:outline-none"
         aria-label="Fermer le menu"
       >
-        <svg 
-          class="w-6 h-6" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
         >
-          <path 
-            stroke-linecap="round" 
-            stroke-linejoin="round" 
-            stroke-width="2" 
-            d="M6 18L18 6M6 6l12 12"
-          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"></path>
         </svg>
       </button>
 
       <ul class="mt-8 space-y-4">
-        {navItems.map(item => (
-          <li>
-            <a 
-              href={item.path}
-              class="block py-2 px-4 text-white rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-white/20 hover:to-white/30"
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
+        {
+          navItems.map((item) => (
+            <li>
+              <a
+                href={item.path}
+                class="block py-2 px-4 text-white rounded-lg transition-all duration-300 hover:bg-gradient-to-r hover:from-white/20 hover:to-white/30"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </div>
 
   <!-- Overlay -->
-  <div 
-    id="menuOverlay" 
+  <div
+    id="menuOverlay"
     class="fixed inset-0 bg-black opacity-0 pointer-events-none transition-opacity duration-300 z-40"
   >
   </div>
 </nav>
 
 <script>
-  const menuButton = document.getElementById('menuButton');
-  const closeButton = document.getElementById('closeButton');
-  const mobileMenu = document.getElementById('mobileMenu');
-  const menuOverlay = document.getElementById('menuOverlay');
-  const navbarBg = document.getElementById('navbarBg');
+  const menuButton = document.getElementById("menuButton");
+  const closeButton = document.getElementById("closeButton");
+  const mobileMenu = document.getElementById("mobileMenu");
+  const menuOverlay = document.getElementById("menuOverlay");
+  const navbarBg = document.getElementById("navbarBg");
 
   function openMenu() {
-    document.body.style.overflow = 'hidden';
-    mobileMenu?.classList.remove('translate-x-full', 'hidden');
-    menuOverlay?.classList.remove('pointer-events-none', 'opacity-0');
-    menuOverlay?.classList.add('opacity-50');
+    document.body.style.overflow = "hidden";
+    mobileMenu?.classList.remove("translate-x-full", "hidden");
+    menuOverlay?.classList.remove("pointer-events-none", "opacity-0");
+    menuOverlay?.classList.add("opacity-50");
   }
 
   function closeMenu() {
-    document.body.style.overflow = '';
-    mobileMenu?.classList.add('translate-x-full');
-    menuOverlay?.classList.remove('opacity-50');
-    menuOverlay?.classList.add('opacity-0', 'pointer-events-none');
+    document.body.style.overflow = "";
+    mobileMenu?.classList.add("translate-x-full");
+    menuOverlay?.classList.remove("opacity-50");
+    menuOverlay?.classList.add("opacity-0", "pointer-events-none");
     setTimeout(() => {
-      mobileMenu?.classList.add('hidden');
+      mobileMenu?.classList.add("hidden");
     }, 300);
   }
 
-  menuButton?.addEventListener('click', openMenu);
-  closeButton?.addEventListener('click', closeMenu);
-  menuOverlay?.addEventListener('click', closeMenu);
+  menuButton?.addEventListener("click", openMenu);
+  closeButton?.addEventListener("click", closeMenu);
+  menuOverlay?.addEventListener("click", closeMenu);
 
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     if (window.innerWidth >= 768) {
       closeMenu();
     }
   });
 
-  document.querySelectorAll('#mobileMenu a').forEach(link => {
-    link.addEventListener('click', closeMenu);
+  document.querySelectorAll("#mobileMenu a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
   });
 
-  window.addEventListener('scroll', () => {
+  window.addEventListener("scroll", () => {
     const scrollPosition = window.scrollY;
     if (scrollPosition > 0) {
-      navbarBg?.classList.add('bg-opacity-80', 'backdrop-blur-sm');
+      navbarBg?.classList.add("bg-opacity-80", "backdrop-blur-sm");
     } else {
-      navbarBg?.classList.remove('bg-opacity-80', 'backdrop-blur-sm');
+      navbarBg?.classList.remove("bg-opacity-80", "backdrop-blur-sm");
     }
   });
 </script>
