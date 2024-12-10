@@ -1,11 +1,11 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
-import { getClub } from '../../../../lib/db/clubs';
+import { clubModel } from '../../../../lib/db/models/club';
 
 const { id } = Astro.params;
 const clubId = parseInt(id || '');
 
-const club = await getClub(clubId);
+const club = await clubModel.getById(clubId);
 if (!club) {
   return Astro.redirect('/admin/clubs');
 }
