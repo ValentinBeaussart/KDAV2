@@ -16,7 +16,7 @@ const env = readFileSync(envPath, "utf8")
     return acc;
   }, {});
 
-const supabaseUrl = env.SUPABASE_URL;
+const supabaseUrl = env.SUPABASE_DATABASE_URL;
 const supabaseAnonKey = env.SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
