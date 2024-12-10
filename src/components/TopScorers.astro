@@ -1,0 +1,60 @@
+---
+import { getPlayers } from '../lib/db/players';
+
+const players = await getPlayers();
+
+const topScorers = players
+  ?.sort((a, b) => {
+    // First sort by goals
+    if (b.goals !== a.goals) {
+      return b.goals - a.goals;
+    }
+    // If goals are equal, player with fewer appearances ranks higher
+    if (a.appearances !== b.appearances) {
+      return a.appearances - b.appearances;
+    }
+    // If appearances are equal too, sort by assists
+    return b.assists - a.assists;
+  })
+  .slice(0, 3);
+---
+
+<div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+  <h2 class="text-2xl font-bold text-primary mb-4">Meilleurs Buteurs</h2>
+  {topScorers && topScorers.length > 0 ? (
+    <div class="space-y-4">
+      {topScorers.map((scorer, index) => (
+        <div class="border-b pb-2">
+          <div class="grid grid-cols-12 items-center gap-2 mb-1">
+            <div class={`col-span-1 text-xl font-bold ${
+              index === 0 ? 'text-yellow-500' :
+              index === 1 ? 'text-gray-400' :
+              index === 2 ? 'text-amber-700' :
+              'text-primary'
+            }`}>
+              {index + 1}
+            </div>
+            <div class="col-span-9 font-semibold text-primary">
+              {scorer.name}
+              <span class="text-sm font-normal text-gray-600 ml-2">
+                (#{scorer.number})
+              </span>
+            </div>
+            <div class="col-span-2 text-2xl font-bold text-primary text-right">
+              {scorer.goals}
+            </div>
+          </div>
+          <div class="grid grid-cols-12 gap-2">
+            <div class="col-span-1"></div>
+            <div class="col-span-11 flex justify-between text-sm text-gray-600">
+              <span>{scorer.appearances} match{scorer.appearances > 1 ? 's' : ''}</span>
+              <span>{scorer.assists} passe{scorer.assists > 1 ? 's' : ''} décisive{scorer.assists > 1 ? 's' : ''}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <p class="text-center text-gray-600">Aucune statistique disponible</p>
+  )}
+</div>

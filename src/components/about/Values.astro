@@ -1,0 +1,32 @@
+---
+const values = [
+  {
+    title: "Excellence",
+    description: "Nous visons l'excellence dans tout ce que nous entreprenons, sur et en dehors du terrain."
+  },
+  {
+    title: "Esprit d'équipe",
+    description: "La force du collectif est au cœur de notre philosophie."
+  },
+  {
+    title: "Formation",
+    description: "Nous nous engageons à former les futures générations de joueurs."
+  },
+  {
+    title: "Respect",
+    description: "Le respect mutuel et le fair-play sont des valeurs fondamentales de notre club."
+  }
+];
+---
+
+<section class="bg-white rounded-lg shadow-lg p-6 mb-8">
+  <h2 class="text-2xl font-bold text-primary mb-4">Nos Valeurs</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {values.map(value => (
+      <div class="border-l-4 border-primary pl-4">
+        <h3 class="font-bold text-lg text-primary mb-2">{value.title}</h3>
+        <p class="text-gray-700">{value.description}</p>
+      </div>
+    ))}
+  </div>
+</section>

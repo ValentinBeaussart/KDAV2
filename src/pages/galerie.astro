@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ImageModal from '../components/gallery/ImageModal.astro';
+import { galleryImages } from '../data/gallery';
+---
+
+<Layout title="Galerie">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-8">Galerie Photos</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      {galleryImages.map((image, index) => (
+        <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg">
+          <img
+            src={image.thumbnail}
+            alt={image.title}
+            class="w-full h-64 object-cover transform transition-transform duration-300 group-hover:scale-105"
+            data-gallery-image
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+              <h3 class="font-bold text-lg">{image.title}</h3>
+              <p class="text-sm text-gray-200">{new Date(image.date).toLocaleDateString('fr-FR')}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <ImageModal images={galleryImages} />
+</Layout>
+
+<style>
+  [data-gallery-image] {
+    cursor: zoom-in;
+  }
+</style>

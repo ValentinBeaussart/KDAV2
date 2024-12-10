@@ -1,0 +1,44 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StandingsTable from '../components/standings/StandingsTable.astro';
+import { getMcDoClubs } from '../lib/db/clubs';
+
+const clubs = await getMcDoClubs();
+
+// Sort clubs by points, goal difference, and goals scored
+const sortedClubs = clubs 
+  ? clubs
+      .sort((a, b) => {
+        // First sort by points
+        if (a.points !== b.points) return b.points - a.points;
+        
+        // Then by goal difference
+        const goalDiffA = a.goals_for - a.goals_against;
+        const goalDiffB = b.goals_for - b.goals_against;
+        if (goalDiffA !== goalDiffB) return goalDiffB - goalDiffA;
+        
+        // Finally by goals scored
+        return b.goals_for - a.goals_for;
+      })
+      .map((club, index) => ({
+        ...club,
+        position: index + 1,
+        goalDifference: club.goals_for - club.goals_against
+      })) 
+  : [];
+---
+
+<Layout title="Classement">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-8">Classement Poule McDo</h1>
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      {sortedClubs.length > 0 ? (
+        <StandingsTable teams={sortedClubs} />
+      ) : (
+        <div class="text-center text-gray-500 py-8">
+          <p>Aucune équipe n'a été ajoutée au classement de la poule McDo.</p>
+        </div>
+      )}
+    </div>
+  </div>
+</Layout>

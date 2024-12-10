@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Garde Impérial",
+    "number": 12,
+    "position": "Défenseur",
+    "photo": "/player.webp",
+    "id": 1,
+    "appearances": 1,
+    "goals": 3,
+    "assists": 2
+  }
+]

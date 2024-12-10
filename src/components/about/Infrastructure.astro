@@ -1,0 +1,36 @@
+---
+const facilities = [
+  {
+    name: "Stade Principal",
+    capacity: "2000 spectateurs",
+    features: ["Pelouse naturelle", "Tribune couverte", "Éclairage LED"]
+  },
+  {
+    name: "Terrain d'entraînement",
+    features: ["Surface synthétique", "Éclairage nocturne"]
+  },
+  {
+    name: "Club House",
+    features: ["Vestiaires modernes", "Salle de musculation", "Espace de réception"]
+  }
+];
+---
+
+<section class="bg-white rounded-lg shadow-lg p-6">
+  <h2 class="text-2xl font-bold text-primary mb-4">Nos Installations</h2>
+  <div class="space-y-6">
+    {facilities.map(facility => (
+      <div class="border-b last:border-b-0 pb-4 last:pb-0">
+        <h3 class="font-bold text-lg text-primary mb-2">{facility.name}</h3>
+        {facility.capacity && (
+          <p class="text-gray-600 mb-2">Capacité : {facility.capacity}</p>
+        )}
+        <ul class="list-disc list-inside text-gray-700">
+          {facility.features.map(feature => (
+            <li>{feature}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</section>

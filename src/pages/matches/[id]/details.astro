@@ -1,0 +1,146 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getMatch } from '../../../lib/db/matches';
+import { getMatchPlayers } from '../../../lib/db/match-players';
+import { getPlayers } from '../../../lib/db/players';
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const matchId = parseInt(id || '');
+
+if (!id || isNaN(matchId)) {
+  return Astro.redirect('/calendrier');
+}
+
+let match;
+let scorers;
+let playerDetails;
+let matchType;
+let formattedDate;
+
+try {
+  match = await getMatch(matchId);
+  if (!match) {
+    return Astro.redirect('/calendrier');
+  }
+
+  const allPlayers = await getPlayers();
+  const matchPlayers = await getMatchPlayers(matchId);
+
+  // Get scorers for this match
+  scorers = matchPlayers
+    .filter(mp => mp.goals > 0)
+    .map(mp => {
+      const player = allPlayers.find(p => p.id === mp.player_id);
+      return {
+        ...player,
+        goals: mp.goals
+      };
+    })
+    .sort((a, b) => b.goals - a.goals);
+
+  playerDetails = matchPlayers.map(mp => {
+    const player = allPlayers.find(p => p.id === mp.player_id);
+    return {
+      ...player,
+      matchStats: {
+        goals: mp.goals,
+        assists: mp.assists
+      }
+    };
+  });
+
+  matchType = match.match_type === 'MCDO_POOL' ? 'Match de championnat' :
+              match.match_type === 'FRIENDLY' ? 'Match amical' :
+              match.match_type === 'CUP' ? 'Match de coupe' :
+              'Champ Cup';
+
+  const matchDate = new Date(match.date);
+  formattedDate = matchDate.toLocaleDateString('fr-FR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).replace(/^\w/, c => c.toUpperCase());
+} catch (error) {
+  console.error('Error loading match details:', error);
+  return Astro.redirect('/calendrier');
+}
+---
+
+<Layout title="Détails du Match">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <!-- En-tête du match -->
+      <div class="bg-primary text-white p-6">
+        <h1 class="text-3xl font-bold text-center mb-4">
+          KDA Sporting Club {match.home_score ?? '-'} - {match.away_score ?? '-'} {match.opponent_name}
+        </h1>
+        <div class="text-center space-y-1 text-gray-100">
+          {matchType && match.competition_round && (
+            <p>{matchType} - {match.competition_round}</p>
+          )}
+          <p>{formattedDate} à {match.time}</p>
+          <p>{match.location}</p>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <!-- Composition d'équipe -->
+        {match.lineup_image && (
+          <div class="mb-8">
+            <h2 class="text-xl font-bold text-primary mb-4">Composition de l'équipe</h2>
+            <div class="flex justify-center">
+              <img 
+                src={match.lineup_image} 
+                alt="Composition de l'équipe"
+                class="rounded-lg shadow-md max-w-full h-auto"
+              />
+            </div>
+          </div>
+        )}
+
+        <!-- Buteurs -->
+        {scorers?.length > 0 && (
+          <div class="mb-8">
+            <h2 class="text-xl font-bold text-primary mb-4">Buteurs</h2>
+            <div class="bg-gray-50 rounded-lg p-4">
+              {scorers.map(scorer => (
+                <div class="flex items-center mb-2 last:mb-0">
+                  <span class="font-medium">#{scorer.number} {scorer.name}</span>
+                  {Array(scorer.goals).fill('⚽').map(() => (
+                    <span class="ml-1">⚽</span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Liste des joueurs -->
+        {playerDetails?.length > 0 && (
+          <div>
+            <h2 class="text-xl font-bold text-primary mb-4">Joueurs</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {playerDetails.map(player => (
+                <div class="bg-gray-50 rounded-lg p-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="font-semibold text-primary">
+                      #{player.number} {player.name}
+                    </span>
+                    <span class="text-gray-600">{player.position}</span>
+                  </div>
+                  <div class="text-sm text-gray-600 flex space-x-4">
+                    <span>Buts : {player.matchStats.goals}</span>
+                    <span>Passes décisives : {player.matchStats.assists}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</Layout>

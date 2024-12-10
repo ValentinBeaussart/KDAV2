@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import NextMatch from '../components/NextMatch.astro';
+import TopScorers from '../components/TopScorers.astro';
+import LatestNews from '../components/LatestNews.astro';
+
+const title = "Accueil";
+---
+
+<Layout {title}>
+  <div class="space-y-8">
+    <NextMatch />
+    <TopScorers />
+    <LatestNews />
+  </div>
+</Layout>

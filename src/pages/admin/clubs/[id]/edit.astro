@@ -1,0 +1,248 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getClub } from '../../../../lib/db/clubs';
+
+const { id } = Astro.params;
+const clubId = parseInt(id || '');
+
+const club = await getClub(clubId);
+if (!club) {
+  return Astro.redirect('/admin/clubs');
+}
+
+// Prevent editing KDA club details except stats
+const isKDA = club.id === 1;
+---
+
+<Layout title={isKDA ? "Modifier les Stats KDA" : "Modifier un Club"}>
+  <div class="max-w-4xl mx-auto py-8">
+    <h1 class="text-3xl font-bold text-primary mb-8">
+      {isKDA ? "Modifier les Stats KDA" : "Modifier un Club"}
+    </h1>
+
+    <form id="clubForm" class="bg-white rounded-lg shadow-lg p-6" data-club-id={clubId}>
+      <div class="space-y-6">
+        <!-- Club Details -->
+        {!isKDA && (
+          <>
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700">Nom du club</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={club.name}
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="logo" class="block text-sm font-medium text-gray-700">URL du logo</label>
+              <input
+                type="url"
+                id="logo"
+                name="logo"
+                value={club.logo || ''}
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="is_mcdo_pool"
+                  name="is_mcdo_pool"
+                  checked={club.is_mcdo_pool}
+                  class="rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <span class="ml-2 text-sm text-gray-700">Équipe de la poule McDo</span>
+              </label>
+            </div>
+          </>
+        )}
+
+        <!-- Club Stats -->
+        <div class="border-t pt-6">
+          <h2 class="text-lg font-semibold text-primary mb-4">Statistiques</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="played" class="block text-sm font-medium text-gray-700">Matchs joués</label>
+              <input
+                type="number"
+                id="played"
+                name="played"
+                value={club.played}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="won" class="block text-sm font-medium text-gray-700">Victoires</label>
+              <input
+                type="number"
+                id="won"
+                name="won"
+                value={club.won}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="drawn" class="block text-sm font-medium text-gray-700">Matchs nuls</label>
+              <input
+                type="number"
+                id="drawn"
+                name="drawn"
+                value={club.drawn}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="lost" class="block text-sm font-medium text-gray-700">Défaites</label>
+              <input
+                type="number"
+                id="lost"
+                name="lost"
+                value={club.lost}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="goals_for" class="block text-sm font-medium text-gray-700">Buts marqués</label>
+              <input
+                type="number"
+                id="goals_for"
+                name="goals_for"
+                value={club.goals_for}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+
+            <div>
+              <label for="goals_against" class="block text-sm font-medium text-gray-700">Buts encaissés</label>
+              <input
+                type="number"
+                id="goals_against"
+                name="goals_against"
+                value={club.goals_against}
+                min="0"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              />
+            </div>
+          </div>
+
+          <!-- Calculated Stats -->
+          <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Différence de buts</label>
+              <div class="mt-1 py-2 px-3 bg-gray-50 rounded-md text-gray-700">
+                <span id="goalDifference">{club.goals_for - club.goals_against}</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Points</label>
+              <div class="mt-1 py-2 px-3 bg-gray-50 rounded-md text-gray-700">
+                <span id="points">{club.won * 3 + club.drawn}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          <a 
+            href="/admin/clubs"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Annuler
+          </a>
+          <button
+            type="submit"
+            class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</Layout>
+
+<script>
+  function updateCalculatedStats() {
+    const goalsFor = parseInt((document.getElementById('goals_for') as HTMLInputElement).value) || 0;
+    const goalsAgainst = parseInt((document.getElementById('goals_against') as HTMLInputElement).value) || 0;
+    const won = parseInt((document.getElementById('won') as HTMLInputElement).value) || 0;
+    const drawn = parseInt((document.getElementById('drawn') as HTMLInputElement).value) || 0;
+
+    const goalDifference = goalsFor - goalsAgainst;
+    const points = won * 3 + drawn;
+
+    document.getElementById('goalDifference')!.textContent = goalDifference.toString();
+    document.getElementById('points')!.textContent = points.toString();
+  }
+
+  // Add event listeners to update calculated stats
+  ['goals_for', 'goals_against', 'won', 'drawn'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updateCalculatedStats);
+  });
+
+  document.getElementById('clubForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const form = e.target as HTMLFormElement;
+    const clubId = form.dataset.clubId;
+    const formData = new FormData(form);
+    
+    const clubData = {
+      ...(clubId === '1' ? {} : {
+        name: formData.get('name'),
+        logo: formData.get('logo') || null,
+        is_mcdo_pool: formData.get('is_mcdo_pool') === 'on'
+      }),
+      played: parseInt(formData.get('played') as string),
+      won: parseInt(formData.get('won') as string),
+      drawn: parseInt(formData.get('drawn') as string),
+      lost: parseInt(formData.get('lost') as string),
+      goals_for: parseInt(formData.get('goals_for') as string),
+      goals_against: parseInt(formData.get('goals_against') as string),
+      points: parseInt(formData.get('won') as string) * 3 + parseInt(formData.get('drawn') as string)
+    };
+
+    try {
+      const response = await fetch(`/api/clubs/${clubId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(clubData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error updating club');
+      }
+
+      window.location.href = '/admin/clubs';
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error instanceof Error ? error.message : 'Error updating club');
+    }
+  });
+</script>

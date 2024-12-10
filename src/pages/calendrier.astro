@@ -1,0 +1,82 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MatchCard from '../components/calendar/MatchCard.astro';
+import { getMatches } from '../lib/db/matches';
+import { getClub } from '../lib/db/clubs';
+
+const matches = await getMatches();
+const kdaClub = await getClub(1);
+
+// Sort matches into past and upcoming
+const pastMatches = matches
+  ? matches
+      .filter(match => match.is_completed)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  : [];
+
+const upcomingMatches = matches
+  ? matches
+      .filter(match => !match.is_completed)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+  : [];
+---
+
+<Layout title="Calendrier">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-8">Calendrier des Matchs</h1>
+
+    {upcomingMatches.length > 0 ? (
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-primary mb-4">Prochains Matchs</h2>
+        {upcomingMatches.map(match => (
+          <MatchCard match={{
+            id: match.id,
+            date: match.date,
+            time: match.time,
+            location: match.location,
+            home_team_name: 'KDA',
+            home_team_logo: kdaClub?.logo || '/kda.jpg',
+            away_team_name: match.opponent_name,
+            away_team_logo: match.opponent_logo,
+            home_score: match.home_score,
+            away_score: match.away_score,
+            is_completed: match.is_completed,
+            match_type: match.match_type,
+            competition_round: match.competition_round
+          }} />
+        ))}
+      </div>
+    ) : (
+      <div class="mb-8 text-center text-gray-500 py-8">
+        <p>Aucun match à venir</p>
+      </div>
+    )}
+
+    {pastMatches.length > 0 ? (
+      <div>
+        <h2 class="text-2xl font-bold text-primary mb-4">Matchs Passés</h2>
+        {pastMatches.map(match => (
+          <MatchCard match={{
+            id: match.id,
+            date: match.date,
+            time: match.time,
+            location: match.location,
+            home_team_name: 'KDA',
+            home_team_logo: kdaClub?.logo || '/kda.jpg',
+            away_team_name: match.opponent_name,
+            away_team_logo: match.opponent_logo,
+            home_score: match.home_score,
+            away_score: match.away_score,
+            is_completed: match.is_completed,
+            match_type: match.match_type,
+            competition_round: match.competition_round
+          }} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center text-gray-500 py-8">
+        <p>Aucun match passé</p>
+      </div>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,80 @@
+---
+import { getMatches } from '../lib/db';
+
+const matches = await getMatches();
+
+const nextMatch = matches
+  ?.filter(match => !match.is_completed)
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0];
+---
+
+{!nextMatch ? (
+  <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+    <h2 class="text-2xl font-bold text-primary mb-6">Prochain Match</h2>
+    <p class="text-center text-gray-600">Aucun match à venir</p>
+  </div>
+) : (
+  <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+    <h2 class="text-2xl font-bold text-primary mb-6">Prochain Match</h2>
+    
+    <div class="text-center mb-8">
+      <div class="flex items-center justify-center space-x-4 mb-4">
+        <div class="text-2xl font-bold text-primary">KDA</div>
+        <div class="text-xl font-bold text-primary">VS</div>
+        <div class="text-2xl font-bold text-primary">{nextMatch.opponent_name}</div>
+      </div>
+      
+      <div class="text-gray-600 space-y-2">
+        <p class="font-semibold">{nextMatch.location}</p>
+        <p>
+          {new Date(nextMatch.date).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          })} à {nextMatch.time}
+        </p>
+        {nextMatch.match_type === 'MCDO_POOL' && (
+          <p class="text-primary font-medium">Match de championnat</p>
+        )}
+        {nextMatch.competition_round && (
+          <p class="text-sm">{nextMatch.competition_round}</p>
+        )}
+      </div>
+    </div>
+
+    <div class="countdown-timer text-center">
+      <div id="countdown" class="text-3xl font-bold text-primary"></div>
+    </div>
+  </div>
+)}
+
+<script define:vars={{ nextMatch }}>
+function updateCountdown() {
+  if (!nextMatch) return;
+  
+  const matchDateTime = new Date(`${nextMatch.date}T${nextMatch.time}`);
+  const now = new Date();
+  
+  if (now >= matchDateTime) {
+    document.getElementById('countdown').innerHTML = "Le match a commencé !";
+    return;
+  }
+
+  const timeRemaining = matchDateTime.getTime() - now.getTime();
+  
+  const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+  document.getElementById('countdown').innerHTML = 
+    `Dans ${days}j ${hours}h ${minutes}m ${seconds}s`;
+}
+
+const countdownInterval = setInterval(updateCountdown, 1000);
+updateCountdown();
+
+document.addEventListener('astro:before-swap', () => {
+  clearInterval(countdownInterval);
+});
+</script>

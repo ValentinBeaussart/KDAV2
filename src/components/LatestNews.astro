@@ -1,0 +1,45 @@
+---
+import { getNews } from '../lib/db/news';
+
+const news = await getNews();
+---
+
+<div class="bg-white rounded-lg shadow-lg p-6">
+  <h2 class="text-2xl font-bold text-primary mb-4">Dernières Actualités</h2>
+  <div class="grid gap-6">
+    {news.length > 0 ? news.map(article => (
+      <div class="border-b pb-4 last:border-b-0">
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <h3 class="font-semibold text-lg text-primary mb-2">
+              <a href={`/actualites/${article.id}`} class="hover:underline">
+                {article.title}
+              </a>
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">
+              {new Date(article.date).toLocaleDateString('fr-FR')}
+            </p>
+            <p class="text-gray-700">{article.summary}</p>
+            <a 
+              href={`/actualites/${article.id}`}
+              class="inline-block mt-2 text-primary hover:underline"
+            >
+              Lire la suite
+            </a>
+          </div>
+          {article.image && (
+            <div class="flex-shrink-0">
+              <img 
+                src={article.image} 
+                alt={article.title}
+                class="w-32 h-32 object-cover rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    )) : (
+      <p class="text-center text-gray-500">Aucune actualité disponible</p>
+    )}
+  </div>
+</div>

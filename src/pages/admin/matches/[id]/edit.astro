@@ -1,0 +1,355 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import ImageUpload from '../../../../components/admin/ImageUpload.astro';
+import { getMatch } from '../../../../lib/db/matches';
+import { getMatchPlayers } from '../../../../lib/db/match-players';
+import { getPlayers } from '../../../../lib/db/players';
+import { getClubs } from '../../../../lib/db/clubs';
+
+const { id } = Astro.params;
+const matchId = parseInt(id);
+
+const match = await getMatch(matchId);
+if (!match) {
+  return Astro.redirect('/admin/matches');
+}
+
+const allPlayers = await getPlayers();
+const matchPlayers = await getMatchPlayers(matchId);
+const clubs = await getClubs();
+const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
+
+const playerDetails = matchPlayers.map(mp => {
+  const player = allPlayers.find(p => p.id === mp.player_id);
+  return {
+    ...player,
+    matchStats: {
+      goals: mp.goals,
+      assists: mp.assists
+    }
+  };
+});
+---
+
+<Layout title="Modifier un Match">
+  <div class="max-w-4xl mx-auto py-8">
+    <h1 class="text-3xl font-bold text-primary mb-8">Modifier un Match</h1>
+
+    <form id="matchForm" class="bg-white rounded-lg shadow-lg p-6" data-match-id={matchId}>
+      <div class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="date" class="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              id="date"
+              name="date"
+              value={match.date}
+              required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label for="time" class="block text-sm font-medium text-gray-700">Heure</label>
+            <input
+              type="time"
+              id="time"
+              name="time"
+              value={match.time}
+              required
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="match_type" class="block text-sm font-medium text-gray-700">Type de Match</label>
+          <select
+            id="match_type"
+            name="match_type"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+          >
+            <option value="FRIENDLY" selected={match.match_type === 'FRIENDLY'}>Match Amical</option>
+            <option value="MCDO_POOL" selected={match.match_type === 'MCDO_POOL'}>Poule McDo</option>
+            <option value="CUP" selected={match.match_type === 'CUP'}>Coupe</option>
+            <option value="CHAMP_CUP" selected={match.match_type === 'CHAMP_CUP'}>Champ' Cup</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="competition_round" class="block text-sm font-medium text-gray-700">Tour de compétition</label>
+          <input
+            type="text"
+            id="competition_round"
+            name="competition_round"
+            value={match.competition_round}
+            placeholder="Ex: Quart de finale, Journée 3, etc."
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Adversaire</label>
+          <div id="opponent_club_container" class={match.match_type !== 'MCDO_POOL' ? 'hidden' : ''}>
+            <select
+              name="opponent_club_id"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            >
+              <option value="">Sélectionner un club</option>
+              {opponentClubs.map(club => (
+                <option 
+                  value={club.id}
+                  selected={club.id === match.opponent_club_id}
+                >
+                  {club.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div id="opponent_name_container" class={match.match_type === 'MCDO_POOL' ? 'hidden' : ''}>
+            <input
+              type="text"
+              name="opponent_name"
+              value={match.opponent_name}
+              placeholder="Nom de l'équipe adverse"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="location" class="block text-sm font-medium text-gray-700">Lieu</label>
+          <input
+            type="text"
+            id="location"
+            name="location"
+            value={match.location}
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="home_score" class="block text-sm font-medium text-gray-700">Score KDA</label>
+            <input
+              type="number"
+              id="home_score"
+              name="home_score"
+              value={match.home_score}
+              min="0"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            />
+          </div>
+
+          <div>
+            <label for="away_score" class="block text-sm font-medium text-gray-700">Score Adversaire</label>
+            <input
+              type="number"
+              id="away_score"
+              name="away_score"
+              value={match.away_score}
+              min="0"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="flex items-center">
+            <input
+              type="checkbox"
+              name="is_completed"
+              checked={match.is_completed}
+              class="rounded border-gray-300 text-primary focus:ring-primary"
+            />
+            <span class="ml-2 text-sm text-gray-700">Match terminé</span>
+          </label>
+        </div>
+
+        <div>
+          <ImageUpload
+            id="lineup_image"
+            label="Image de composition"
+            currentImage={match.lineup_image}
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Joueurs participants</label>
+          <div class="space-y-4">
+            {allPlayers.map((player) => {
+              const playerMatch = matchPlayers.find(mp => mp.player_id === player.id);
+              return (
+                <div class="border rounded-lg p-4">
+                  <label class="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      name="players"
+                      value={player.id}
+                      checked={!!playerMatch}
+                      class="rounded border-gray-300 text-primary focus:ring-primary"
+                    />
+                    <span class="ml-2 text-gray-700">
+                      #{player.number} - {player.name} ({player.position})
+                    </span>
+                  </label>
+
+                  <div class="ml-6 grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700">Buts</label>
+                      <input
+                        type="number"
+                        name={`goals_${player.id}`}
+                        value={playerMatch?.goals || 0}
+                        min="0"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700">Passes décisives</label>
+                      <input
+                        type="number"
+                        name={`assists_${player.id}`}
+                        value={playerMatch?.assists || 0}
+                        min="0"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-4">
+          <a 
+            href="/admin/matches"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Annuler
+          </a>
+          <button
+            type="submit"
+            class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</Layout>
+
+<script>
+  const matchForm = document.getElementById('matchForm');
+  const matchTypeSelect = document.getElementById('match_type');
+  const opponentClubContainer = document.getElementById('opponent_club_container');
+  const opponentNameContainer = document.getElementById('opponent_name_container');
+
+  // Toggle opponent input based on match type
+  matchTypeSelect?.addEventListener('change', (e) => {
+    const matchType = (e.target as HTMLSelectElement).value;
+    const opponentClubSelect = document.querySelector('[name="opponent_club_id"]') as HTMLSelectElement;
+    const opponentNameInput = document.querySelector('[name="opponent_name"]') as HTMLInputElement;
+
+    if (matchType === 'MCDO_POOL') {
+      opponentClubContainer?.classList.remove('hidden');
+      opponentNameContainer?.classList.add('hidden');
+      opponentClubSelect.required = true;
+      opponentNameInput.required = false;
+      opponentNameInput.value = '';
+    } else {
+      opponentClubContainer?.classList.add('hidden');
+      opponentNameContainer?.classList.remove('hidden');
+      opponentClubSelect.required = false;
+      opponentNameInput.required = true;
+      opponentClubSelect.value = '';
+    }
+  });
+
+  matchForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const form = e.target as HTMLFormElement;
+    const matchId = form.dataset.matchId;
+    const formData = new FormData(form);
+    
+    // Handle image upload
+    const lineupImageFile = formData.get('lineup_image') as File;
+    let lineupImageUrl = formData.get('lineup_image_current') as string;
+
+    if (lineupImageFile?.size > 0) {
+      const imageFormData = new FormData();
+      imageFormData.append('file', lineupImageFile);
+
+      try {
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: imageFormData
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload image');
+        }
+
+        const { url } = await uploadResponse.json();
+        lineupImageUrl = url;
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Error uploading image');
+        return;
+      }
+    }
+
+    const selectedPlayers = formData.getAll('players').map(id => parseInt(id.toString()));
+    const matchType = formData.get('match_type');
+    const opponentClubId = formData.get('opponent_club_id');
+    
+    const matchData = {
+      date: formData.get('date'),
+      time: formData.get('time'),
+      match_type: matchType,
+      competition_round: formData.get('competition_round') || null,
+      location: formData.get('location'),
+      opponent_name: matchType === 'MCDO_POOL' 
+        ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
+        : formData.get('opponent_name'),
+      opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
+      lineup_image: lineupImageUrl,
+      home_score: formData.get('home_score') ? parseInt(formData.get('home_score').toString()) : null,
+      away_score: formData.get('away_score') ? parseInt(formData.get('away_score').toString()) : null,
+      is_completed: formData.get('is_completed') === 'on',
+      players: selectedPlayers.map(playerId => ({
+        player_id: playerId,
+        goals: parseInt(formData.get(`goals_${playerId}`)?.toString() || '0'),
+        assists: parseInt(formData.get(`assists_${playerId}`)?.toString() || '0')
+      }))
+    };
+
+    try {
+      const response = await fetch(`/api/matches/${matchId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(matchData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error updating match');
+      }
+
+      window.location.href = '/admin/matches';
+    } catch (error) {
+      console.error('Error:', error);
+      alert(error instanceof Error ? error.message : 'Error updating match');
+    }
+  });
+</script>
+```

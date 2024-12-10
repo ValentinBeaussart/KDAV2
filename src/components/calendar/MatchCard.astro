@@ -1,0 +1,99 @@
+---
+interface Props {
+  match: {
+    id: number;
+    date: string;
+    time: string;
+    location: string;
+    home_team_name: string;
+    home_team_logo: string;
+    away_team_name: string;
+    away_team_logo: string;
+    home_score?: number;
+    away_score?: number;
+    is_completed: boolean;
+    match_type?: string;
+    competition_round?: string;
+  };
+}
+
+const { match } = Astro.props;
+
+const matchDate = new Date(match.date);
+const formattedDate = matchDate.toLocaleDateString('fr-FR', {
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric'
+}).replace(/^\w/, c => c.toUpperCase());
+
+const matchType = match.match_type === 'MCDO_POOL' ? 'Match de championnat' :
+                 match.match_type === 'FRIENDLY' ? 'Match amical' :
+                 match.match_type === 'CUP' ? 'Match de coupe' :
+                 match.match_type === 'CHAMP_CUP' ? 'Champ Cup' : '';
+---
+
+<div class="bg-white rounded-lg shadow-lg p-6 mb-4">
+  <div class="flex justify-between items-start mb-6">
+    <div class="space-y-1">
+      {matchType && (
+        <div class="font-medium text-primary">{matchType}</div>
+      )}
+      {match.competition_round && (
+        <div>{match.competition_round}</div>
+      )}
+      <div class="font-semibold">{formattedDate} à {match.time}</div>
+      <div>{match.location}</div>
+    </div>
+    {match.is_completed && (
+      <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+        Terminé
+      </div>
+    )}
+  </div>
+
+  <div class="flex items-center justify-between">
+    <div class="flex-1 flex flex-col items-center justify-center">
+      <div class="w-16 h-16 flex items-center justify-center">
+        <img 
+          src={match.home_team_logo} 
+          alt={match.home_team_name}
+          class="max-w-full max-h-full object-contain"
+        />
+      </div>
+      <div class="font-semibold text-primary text-sm sm:text-base mt-2">{match.home_team_name}</div>
+    </div>
+
+    <div class="flex-shrink-0 flex items-center justify-center w-24">
+      {match.is_completed ? (
+        <div class="text-2xl sm:text-3xl font-bold text-primary">
+          {match.home_score ?? 0} - {match.away_score ?? 0}
+        </div>
+      ) : (
+        <div class="text-xl sm:text-2xl font-bold text-primary">VS</div>
+      )}
+    </div>
+
+    <div class="flex-1 flex flex-col items-center justify-center">
+      <div class="w-16 h-16 flex items-center justify-center">
+        <img 
+          src={match.away_team_logo} 
+          alt={match.away_team_name}
+          class="max-w-full max-h-full object-contain"
+        />
+      </div>
+      <div class="font-semibold text-primary text-sm sm:text-base mt-2">{match.away_team_name}</div>
+    </div>
+  </div>
+
+  {match.is_completed && (
+    <div class="mt-4 pt-4 border-t border-gray-200">
+      <a 
+        href={`/matches/${match.id}/details`} 
+        class="text-primary hover:text-opacity-80 text-sm"
+      >
+        Voir les détails du match
+      </a>
+    </div>
+  )}
+</div>

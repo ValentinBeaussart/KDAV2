@@ -1,0 +1,25 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PlayerCard from '../components/team/PlayerCard.astro';
+import { getPlayers } from '../lib/db/players';
+
+const players = await getPlayers();
+---
+
+<Layout title="Équipe">
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-8">Notre Équipe</h1>
+    
+    {players && players.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {players.map(player => (
+          <PlayerCard player={player} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center text-gray-500 py-8">
+        <p>Aucun joueur n'a été ajouté à l'équipe.</p>
+      </div>
+    )}
+  </div>
+</Layout>

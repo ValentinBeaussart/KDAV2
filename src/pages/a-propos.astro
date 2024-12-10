@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro';
+import History from '../components/about/History.astro';
+import Values from '../components/about/Values.astro';
+import Infrastructure from '../components/about/Infrastructure.astro';
+---
+
+<Layout title="À propos">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-8">À Propos du KDA Sporting Club</h1>
+    <div class="space-y-8">
+      <History />
+      <Values />
+      <Infrastructure />
+    </div>
+  </div>
+</Layout>

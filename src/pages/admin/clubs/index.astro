@@ -1,0 +1,130 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getClubs } from '../../../lib/db/clubs';
+
+const clubs = await getClubs();
+---
+
+<Layout title="Gestion des Clubs">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-primary">Gestion des Clubs</h1>
+      <a 
+        href="/admin/clubs/new" 
+        class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+      >
+        Ajouter un club
+      </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <table class="min-w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Club</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">J</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">V</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">N</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">D</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">BP</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">BC</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">DB</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Pts</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">McDo</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {clubs && clubs.map((club) => (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <img 
+                    src={club.logo || '/kda.jpg'} 
+                    alt={`Logo ${club.name}`}
+                    class="w-8 h-8 mr-3 object-contain"
+                  />
+                  <span class="font-medium">{club.name}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 text-center">{club.played}</td>
+              <td class="px-6 py-4 text-center">{club.won}</td>
+              <td class="px-6 py-4 text-center">{club.drawn}</td>
+              <td class="px-6 py-4 text-center">{club.lost}</td>
+              <td class="px-6 py-4 text-center">{club.goals_for}</td>
+              <td class="px-6 py-4 text-center">{club.goals_against}</td>
+              <td class="px-6 py-4 text-center font-medium">
+                <span class={
+                  (club.goals_for - club.goals_against) > 0 ? 'text-green-600' : 
+                  (club.goals_for - club.goals_against) < 0 ? 'text-red-600' : ''
+                }>
+                  {club.goals_for - club.goals_against > 0 ? '+' : ''}
+                  {club.goals_for - club.goals_against}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-center font-bold">{club.points}</td>
+              <td class="px-6 py-4 text-center">
+                {club.is_mcdo_pool ? (
+                  <span class="text-green-600">✓</span>
+                ) : (
+                  <span class="text-red-600">✗</span>
+                )}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a 
+                  href={`/admin/clubs/${club.id}/edit`}
+                  class="text-primary hover:text-opacity-80 mr-4"
+                >
+                  {club.id === 1 ? 'Modifier stats' : 'Modifier'}
+                </a>
+                {club.id !== 1 && (
+                  <button
+                    data-club-id={club.id}
+                    class="text-red-600 hover:text-red-800 delete-club"
+                  >
+                    Supprimer
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+          {(!clubs || clubs.length === 0) && (
+            <tr>
+              <td colspan="11" class="px-6 py-4 text-center text-gray-500">
+                Aucun club n'a été créé
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-club').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const clubId = (e.target as HTMLButtonElement).dataset.clubId;
+        
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce club ?')) {
+          try {
+            const response = await fetch(`/api/clubs/${clubId}`, {
+              method: 'DELETE',
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || 'Error deleting club');
+            }
+
+            window.location.reload();
+          } catch (error) {
+            console.error('Error:', error);
+            alert(error instanceof Error ? error.message : 'Error deleting club');
+          }
+        }
+      });
+    });
+  });
+</script>

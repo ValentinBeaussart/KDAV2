@@ -1,0 +1,105 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getPlayers } from '../../../lib/db/players';
+
+const players = await getPlayers();
+---
+
+<Layout title="Gestion des Joueurs">
+  <div class="max-w-4xl mx-auto py-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-primary">Gestion des Joueurs</h1>
+      <a 
+        href="/admin/players/new" 
+        class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+      >
+        Ajouter un joueur
+      </a>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+      <table class="min-w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Numéro</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Poste</th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stats</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {players && players.map((player) => (
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {player.number}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {player.name}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {player.position}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                <div class="space-x-4">
+                  <span title="Matchs">{player.appearances || 0} M</span>
+                  <span title="Buts">{player.goals || 0} B</span>
+                  <span title="Passes décisives">{player.assists || 0} PD</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <a 
+                  href={`/admin/players/${player.id}/edit`}
+                  class="text-primary hover:text-opacity-80 mr-4"
+                >
+                  Modifier
+                </a>
+                <button
+                  data-player-id={player.id}
+                  class="text-red-600 hover:text-red-800 delete-player"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          ))}
+          {(!players || players.length === 0) && (
+            <tr>
+              <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                Aucun joueur n'a été créé
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-player').forEach(button => {
+      button.addEventListener('click', async (e) => {
+        const playerId = (e.target as HTMLButtonElement).dataset.playerId;
+        
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce joueur ?')) {
+          try {
+            const response = await fetch(`/api/players/${playerId}`, {
+              method: 'DELETE',
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || 'Error deleting player');
+            }
+
+            window.location.reload();
+          } catch (error) {
+            console.error('Error:', error);
+            alert(error instanceof Error ? error.message : 'Error deleting player');
+          }
+        }
+      });
+    });
+  });
+</script>
