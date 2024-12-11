@@ -27,7 +27,7 @@ const formattedDate = matchDate.toLocaleDateString('fr-FR', {
   year: 'numeric'
 }).replace(/^\w/, c => c.toUpperCase());
 
-const matchType = match.match_type === 'MCDO_POOL' ? 'Match de championnat' :
+const matchType = match.match_type === 'MCDO_POOL' ? 'Poule McDo' :
                  match.match_type === 'FRIENDLY' ? 'Match amical' :
                  match.match_type === 'CUP' ? 'Match de coupe' :
                  match.match_type === 'CHAMP_CUP' ? 'Champ Cup' : '';
