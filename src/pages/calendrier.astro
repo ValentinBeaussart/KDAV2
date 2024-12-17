@@ -42,7 +42,7 @@ const upcomingMatches = matches
                 home_team_name: "KDA",
                 home_team_logo: kdaClub?.logo || "/kda.jpg",
                 away_team_name: match.opponent_name,
-                away_team_logo: clubLogoMap.get(match.opponent_club_id) || "/kda.jpg",
+                away_team_logo: clubLogoMap.get(match.opponent_club_id) || match.opponent_logo,
                 home_score: match.home_score,
                 away_score: match.away_score,
                 is_completed: match.is_completed,
