@@ -204,6 +204,7 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(matchData),
+        console.log(matchData),
       });
 
       if (!response.ok) {
