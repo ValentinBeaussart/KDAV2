@@ -11,12 +11,6 @@ const kdaClub = await getClub(1);
 const allClubs = await getClubs();
 const clubLogoMap = new Map(allClubs.map((club) => [club.id, club.logo || "/default-logo.jpg"]));
 
-// Ajouter le logo des équipes adverses aux matchs
-const updatedMatches = matches.map((match) => ({
-  ...match,
-  away_team_logo: clubLogoMap.get(match.opponent_id) || "/default-logo.jpg", // Logo de l'équipe adverse
-}));
-
 const pastMatches = matches
   ? matches
       .filter((match) => match.is_completed)
@@ -48,6 +42,7 @@ const upcomingMatches = matches
                 home_team_name: "KDA",
                 home_team_logo: kdaClub?.logo || "/kda.jpg",
                 away_team_name: match.opponent_name,
+                away_team_logo: clubLogoMap.get(match.opponent_id) || "/kda.jpg",
                 home_score: match.home_score,
                 away_score: match.away_score,
                 is_completed: match.is_completed,
@@ -78,6 +73,7 @@ const upcomingMatches = matches
                 home_team_name: "KDA",
                 home_team_logo: kdaClub?.logo || "/kda.jpg",
                 away_team_name: match.opponent_name,
+                away_team_logo: clubLogoMap.get(match.opponent_id) || "/kda.jpg",
                 home_score: match.home_score,
                 away_score: match.away_score,
                 is_completed: match.is_completed,
