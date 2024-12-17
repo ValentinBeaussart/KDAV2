@@ -205,7 +205,6 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
         },
         body: JSON.stringify(matchData),
       });
-        console.log(matchData),
 
       if (!response.ok) {
         const error = await response.json();
