@@ -34,7 +34,7 @@ const nextMatch = matches
           {nextMatch.competition_round && (
             <p class="text-sm">{nextMatch.competition_round}</p>
           )}
-          <p>
+          <p class="font-semibold">
             {new Date(nextMatch.date).toLocaleDateString("fr-FR", {
               day: "numeric",
               month: "long",
@@ -42,7 +42,7 @@ const nextMatch = matches
             })}{" "}
             à {nextMatch.time}
           </p>
-          <p class="font-semibold">{nextMatch.location}</p>
+          <p>{nextMatch.location}</p>
         </div>
       </div>
 
