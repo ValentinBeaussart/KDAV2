@@ -65,7 +65,6 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
           />
         </div>
 
-        <div>
           <label class="block text-sm font-medium text-gray-700">Adversaire</label>
           <div id="opponent_club_container" class="hidden">
             <select
@@ -98,7 +97,6 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
             />
           </div>
-        </div>
 
         <div>
           <label for="location" class="block text-sm font-medium text-gray-700">Lieu</label>
@@ -194,7 +192,7 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
         ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
         : formData.get('opponent_name'),
       opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
-  opponent_logo: formData.get('opponent_logo') || null, // Ajout de l'URL du logo ici
+      opponent_logo: formData.get('opponent_logo') || null,
       is_completed: false,
       players: selectedPlayers
     };
