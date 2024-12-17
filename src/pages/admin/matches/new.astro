@@ -194,6 +194,7 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
         ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
         : formData.get('opponent_name'),
       opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
+  opponent_logo: formData.get('opponent_logo') || null, // Ajout de l'URL du logo ici
       is_completed: false,
       players: selectedPlayers
     };
