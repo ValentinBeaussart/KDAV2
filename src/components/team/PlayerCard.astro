@@ -13,21 +13,25 @@ interface Props {
 }
 
 const { player } = Astro.props;
-let showDetails = false;
-
-function toggleDetails() {
-  showDetails = !showDetails;
-}
 ---
+<style>
+  /* Styles pour les détails (affichés au survol ou au clic) */
+  .details-overlay {
+    @apply absolute inset-0 bg-black bg-opacity-80 text-white flex flex-col justify-center items-center p-4 transition-opacity duration-300 opacity-0;
+  }
 
-<div 
-  class="relative group"
-  on:click="toggleDetails"
->
+  .details-overlay.show {
+    opacity: 1; /* Affiche les détails */
+  }
+
+  .group:hover .details-overlay {
+    opacity: 1; /* Affiche au survol */
+  }
+</style>
+
+<div class="relative group card-container" onclick="toggleDetails(this)">
   <!-- Carte principale -->
-  <div 
-    class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105"
-  >
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
     <!-- Image du joueur -->
     <div class="aspect-[3/4] overflow-hidden">
       <img
@@ -38,7 +42,7 @@ function toggleDetails() {
       />
     </div>
 
-    <!-- Informations de base (toujours visibles) -->
+    <!-- Informations de base -->
     <div class="p-4 bg-primary text-white">
       <div class="flex justify-between items-center">
         <h3 class="font-bold">{player.name}</h3>
@@ -47,12 +51,7 @@ function toggleDetails() {
     </div>
 
     <!-- Informations détaillées -->
-    <div 
-      class={`absolute inset-0 bg-black bg-opacity-80 text-white 
-              opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex 
-              flex-col justify-center items-center p-4 
-              ${showDetails ? 'opacity-100' : ''}`}
-    >
+    <div class="details-overlay">
       <div class="text-center">
         <p class="text-xl font-bold mb-4">{player.position}</p>
         <div class="space-y-2">
@@ -73,3 +72,11 @@ function toggleDetails() {
     </div>
   </div>
 </div>
+
+<!-- Script pour le clic sur mobile -->
+<script>
+  function toggleDetails(card) {
+    const details = card.querySelector('.details-overlay');
+    details.classList.toggle('show');
+  }
+</script>
