@@ -111,16 +111,6 @@ const playerDetails = matchPlayers.map(mp => {
             />
           </div>
 
-<div id="opponent_logo_container">
-  <label for="opponent_logo" class="block text-sm font-medium text-gray-700 mt-4">URL du Logo</label>
-  <input
-    type="text"
-    name="opponent_logo"
-    placeholder="https://exemple.com/logo.png"
-    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-  />
-</div>
-
         <div>
           <label for="location" class="block text-sm font-medium text-gray-700">Lieu</label>
           <input
@@ -245,7 +235,6 @@ const playerDetails = matchPlayers.map(mp => {
     ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
     : formData.get('opponent_name'),
   opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
-  opponent_logo: formData.get('opponent_logo') || null, // Ajout de l'URL du logo ici
   lineup_image: lineupImageUrl,
   home_score: formData.get('home_score') ? parseInt(formData.get('home_score').toString()) : null,
   away_score: formData.get('away_score') ? parseInt(formData.get('away_score').toString()) : null,
