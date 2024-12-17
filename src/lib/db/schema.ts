@@ -17,7 +17,7 @@ export const schema = `
   CREATE TABLE IF NOT EXISTS players (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    number INTEGER NOT NULL,
+    number TEXT NOT NULL,
     position TEXT NOT NULL,
     photo TEXT,
     appearances INTEGER DEFAULT 0,
