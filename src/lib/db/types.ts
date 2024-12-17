@@ -49,7 +49,7 @@ export interface Club {
 export interface Player {
   id: number;
   name: string;
-  number: number;
+  number: string;
   position: string;
   photo?: string | null;
   appearances: number;
