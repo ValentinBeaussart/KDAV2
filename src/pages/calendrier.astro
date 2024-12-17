@@ -6,6 +6,7 @@ import { getClub } from "../lib/db/clubs";
 
 const matches = await getMatches();
 const kdaClub = await getClub(1);
+const opponentLogo = await getClubs();
 
 const pastMatches = matches
   ? matches
@@ -38,7 +39,7 @@ const upcomingMatches = matches
                 home_team_name: "KDA",
                 home_team_logo: kdaClub?.logo || "/kda.jpg",
                 away_team_name: match.opponent_name,
-                away_team_logo: "https://www.lucarnivores.com/assets/images/resized/?file=pictures/teams/29zcb-6a89666a2c6-9.jpg&w=400&h=500",
+                away_team_logo: opponentLogo.logo,
                 home_score: match.home_score,
                 away_score: match.away_score,
                 is_completed: match.is_completed,
@@ -69,7 +70,7 @@ const upcomingMatches = matches
                 home_team_name: "KDA",
                 home_team_logo: kdaClub?.logo || "/kda.jpg",
                 away_team_name: match.opponent_name,
-                away_team_logo: "https://www.lucarnivores.com/assets/images/resized/?file=pictures/teams/29zcb-6a89666a2c6-9.jpg&w=400&h=500",
+                away_team_logo: opponentLogo.logo,
                 home_score: match.home_score,
                 away_score: match.away_score,
                 is_completed: match.is_completed,
