@@ -28,7 +28,12 @@ const nextMatch = matches
         </div>
 
         <div class="text-gray-600 space-y-2">
-          <p class="font-semibold">{nextMatch.location}</p>
+          {nextMatch.match_type === "MCDO_POOL" && (
+            <p class="text-primary font-medium">Poule McDo</p>
+          )}
+          {nextMatch.competition_round && (
+            <p class="text-sm">{nextMatch.competition_round}</p>
+          )}
           <p>
             {new Date(nextMatch.date).toLocaleDateString("fr-FR", {
               day: "numeric",
@@ -37,12 +42,7 @@ const nextMatch = matches
             })}{" "}
             à {nextMatch.time}
           </p>
-          {nextMatch.match_type === "MCDO_POOL" && (
-            <p class="text-primary font-medium">Poule McDo</p>
-          )}
-          {nextMatch.competition_round && (
-            <p class="text-sm">{nextMatch.competition_round}</p>
-          )}
+          <p class="font-semibold">{nextMatch.location}</p>
         </div>
       </div>
 
