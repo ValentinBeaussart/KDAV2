@@ -6,8 +6,6 @@ import { getClub } from "../lib/db/clubs";
 
 const matches = await getMatches();
 const kdaClub = await getClub(1);
-const opponentLogo = await getClub();
-console.log(opponentLogo);
 
 const pastMatches = matches
   ? matches
