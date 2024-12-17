@@ -111,17 +111,16 @@ const playerDetails = matchPlayers.map(mp => {
             />
           </div>
 
-          <div>
-            <label for="opponent_logo" class="block text-sm font-medium text-gray-700 mt-4">URL du Logo</label>
-            <input
-              type="url"
-              id="opponent_logo"
-              name="opponent_logo"
-              placeholder="https://exemple.com/logo.png"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-            />
-          </div>
-        </div>
+<div>
+  <label for="opponent_logo" class="block text-sm font-medium text-gray-700 mt-4">URL du Logo</label>
+  <input
+    type="url"
+    id="opponent_logo"
+    name="opponent_logo"
+    placeholder="https://exemple.com/logo.png"
+    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+  />
+</div>
 
         <div>
           <label for="location" class="block text-sm font-medium text-gray-700">Lieu</label>
@@ -238,25 +237,27 @@ const playerDetails = matchPlayers.map(mp => {
     const opponentClubId = formData.get('opponent_club_id');
     
     const matchData = {
-      date: formData.get('date'),
-      time: formData.get('time'),
-      match_type: matchType,
-      competition_round: formData.get('competition_round') || null,
-      location: formData.get('location'),
-      opponent_name: matchType === 'MCDO_POOL' 
-        ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
-        : formData.get('opponent_name'),
-      opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
-      lineup_image: lineupImageUrl,
-      home_score: formData.get('home_score') ? parseInt(formData.get('home_score').toString()) : null,
-      away_score: formData.get('away_score') ? parseInt(formData.get('away_score').toString()) : null,
-      is_completed: formData.get('is_completed') === 'on',
-      players: selectedPlayers.map(playerId => ({
-        player_id: playerId,
-        goals: parseInt(formData.get(`goals_${playerId}`)?.toString() || '0'),
-        assists: parseInt(formData.get(`assists_${playerId}`)?.toString() || '0')
-      }))
-    };
+  date: formData.get('date'),
+  time: formData.get('time'),
+  match_type: matchType,
+  competition_round: formData.get('competition_round') || null,
+  location: formData.get('location'),
+  opponent_name: matchType === 'MCDO_POOL' 
+    ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
+    : formData.get('opponent_name'),
+  opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
+  opponent_logo: formData.get('opponent_logo') || null, // Ajout de l'URL du logo ici
+  lineup_image: lineupImageUrl,
+  home_score: formData.get('home_score') ? parseInt(formData.get('home_score').toString()) : null,
+  away_score: formData.get('away_score') ? parseInt(formData.get('away_score').toString()) : null,
+  is_completed: formData.get('is_completed') === 'on',
+  players: selectedPlayers.map(playerId => ({
+    player_id: playerId,
+    goals: parseInt(formData.get(`goals_${playerId}`)?.toString() || '0'),
+    assists: parseInt(formData.get(`assists_${playerId}`)?.toString() || '0')
+  }))
+};
+
 
     try {
       const response = await fetch(`/api/matches/${matchId}`, {
