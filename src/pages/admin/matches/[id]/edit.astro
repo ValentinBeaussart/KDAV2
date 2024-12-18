@@ -122,7 +122,6 @@ const playerDetails = matchPlayers.map(mp => {
               id="opponent_logo"
               name="opponent_logo"
               value={match.opponent_logo}
-              placeholder="https://exemple.com/logo.png"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
             />
           </div>
@@ -253,7 +252,7 @@ const playerDetails = matchPlayers.map(mp => {
 <script>
     import { supabase } from '../../../../lib/supabaseClient';
 
-  console.log('Salut ! Je suis le client. Ceci est affiché dans la console de développement du navigateur.');
+  console.log(match.opponent_logo, 'Salut ! Je suis le client. Ceci est affiché dans la console de développement du navigateur.');
 
   const matchForm = document.getElementById('matchForm');
   const matchTypeSelect = document.getElementById('match_type');
