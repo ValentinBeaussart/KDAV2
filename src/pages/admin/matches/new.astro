@@ -201,14 +201,14 @@ import { supabase } from '../../../lib/supabaseClient';
     try {
       const fileName = `${Date.now()}_${file.name}`; // Nom unique pour l'image
       const { data, error } = await supabase.storage
-        .from('matches') // Nom du bucket Supabase
+        .from('Images') // Nom du bucket Supabase
         .upload(fileName, file);
 
       if (error) throw error;
 
       // Récupérez l'URL publique de l'image
       const { data: publicUrlData } = supabase.storage
-        .from('matches')
+        .from('Images')
         .getPublicUrl(data.path);
 
       imageUrl = publicUrlData.publicUrl;
