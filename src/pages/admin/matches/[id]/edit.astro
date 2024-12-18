@@ -194,32 +194,31 @@ const playerDetails = matchPlayers.map(mp => {
     const matchId = form.dataset.matchId;
     const formData = new FormData(form);
     
-    // Handle image upload
-    const lineupImageFile = formData.get('lineup_image') as File;
-    let lineupImageUrl = formData.get('lineup_image_current') as string;
+    const file = formData.get('match_image') as File;
 
-    if (lineupImageFile?.size > 0) {
-      const imageFormData = new FormData();
-      imageFormData.append('file', lineupImageFile);
+  // Vérifiez si un fichier a été sélectionné
+  let imageUrl = null;
+  if (file) {
+    try {
+      const fileName = `${Date.now()}_${file.name}`; // Nom unique pour l'image
+      const { data, error } = await supabase.storage
+        .from('Images') // Nom du bucket Supabase
+        .upload(fileName, file);
 
-      try {
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: imageFormData
-        });
+      if (error) throw error;
 
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image');
-        }
+      // Récupérez l'URL publique de l'image
+      const { data: publicUrlData } = supabase.storage
+        .from('Images')
+        .getPublicUrl(data.path);
 
-        const { url } = await uploadResponse.json();
-        lineupImageUrl = url;
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Error uploading image');
-        return;
-      }
+      imageUrl = publicUrlData.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Erreur lors du téléchargement de l\'image.');
+      return;
     }
+  }
 
     const selectedPlayers = formData.getAll('players').map(id => parseInt(id.toString()));
     const matchType = formData.get('match_type');
