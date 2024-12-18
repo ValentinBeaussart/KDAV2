@@ -23,6 +23,7 @@ export const POST: APIRoute = async ({ request }) => {
       time: matchData.time,
       location: matchData.location,
       opponent_name: matchData.opponent_name,
+      opponent_logo: matchData.opponent_logo,
       opponent_club_id: matchData.match_type === 'MCDO_POOL' ? matchData.opponent_club_id : null,
       match_type: matchData.match_type,
       competition_round: matchData.competition_round || null,
