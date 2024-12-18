@@ -234,7 +234,7 @@ const playerDetails = matchPlayers.map(mp => {
     ? document.querySelector(`[name="opponent_club_id"] option[value="${opponentClubId}"]`)?.textContent
     : formData.get('opponent_name'),
   opponent_club_id: matchType === 'MCDO_POOL' ? parseInt(opponentClubId as string) : null,
-  lineup_image: lineupImageUrl,
+    lineup_image: imageUrl,
   home_score: formData.get('home_score') ? parseInt(formData.get('home_score').toString()) : null,
   away_score: formData.get('away_score') ? parseInt(formData.get('away_score').toString()) : null,
   is_completed: formData.get('is_completed') === 'on',
