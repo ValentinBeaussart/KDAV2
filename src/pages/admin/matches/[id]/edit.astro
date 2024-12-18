@@ -121,6 +121,7 @@ const playerDetails = matchPlayers.map(mp => {
               type="text"
               id="opponent_logo"
               name="opponent_logo"
+              value={match.opponent_logo}
               placeholder="https://exemple.com/logo.png"
               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
             />
@@ -179,6 +180,7 @@ const playerDetails = matchPlayers.map(mp => {
             id="match_image"
             name="match_image"
             accept="image/*"
+            value={match.lineup_image}
             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           />
         </div>
