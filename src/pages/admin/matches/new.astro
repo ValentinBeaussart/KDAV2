@@ -158,6 +158,8 @@ const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
 </Layout>
 
 <script>
+import { supabase } from '../../../lib/supabaseClient';
+
   const matchForm = document.getElementById('matchForm');
   const matchTypeSelect = document.getElementById('match_type');
   const opponentClubContainer = document.getElementById('opponent_club_container');
