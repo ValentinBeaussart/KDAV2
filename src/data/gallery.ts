@@ -18,7 +18,7 @@ export const galleryImages: GalleryImage[] = [
   },
   {
     id: 2,
-    url: "/kda-lucarnidor.jpg",
+    url: "../../kda-lucarnidor.jpg",
     thumbnail: "",
     title: "Lucarnid'Or Ligue Panache",
     description: "Notre joueur avec le trophée Lucarnid'Or",
