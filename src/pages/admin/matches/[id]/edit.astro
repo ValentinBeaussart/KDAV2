@@ -142,7 +142,7 @@ const playerDetails = matchPlayers.map(mp => {
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Joueurs participants</label>
           <div class="space-y-2 max-h-60 overflow-y-auto">
-            {players.map((player) => (
+            {allPlayers.map((player) => (
               <label class="flex items-center space-x-3">
                 <input
                   type="checkbox"
@@ -178,6 +178,8 @@ const playerDetails = matchPlayers.map(mp => {
 </Layout>
 
 <script>
+    import { supabase } from '../../../../lib/supabaseClient';
+
   console.log('Salut ! Je suis le client. Ceci est affiché dans la console de développement du navigateur.');
 
   const matchForm = document.getElementById('matchForm');
