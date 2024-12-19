@@ -1,1 +1,33 @@
+---
+import { supabase } from '../lib/supabase';
+
+async function handleLogin(event) {
+  event.preventDefault();
+
+  const email = event.target.email.value;
+  const password = event.target.password.value;
+
+  const { user, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    console.error('Erreur de connexion:', error.message);
+  } else {
+    console.log('Utilisateur connecté:', user);
+    window.location.href = '/dashboard'; // Redirige après connexion
+  }
+}
+---
+
+<html>
+  <body>
+    <form onsubmit="handleLogin(event)">
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Mot de passe" required />
+      <button type="submit">Se connecter</button>
+    </form>
+  </body>
+</html>
 
