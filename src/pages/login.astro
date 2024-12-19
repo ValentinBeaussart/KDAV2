@@ -16,7 +16,7 @@ async function handleLogin(event) {
     console.error('Erreur de connexion:', error.message);
   } else {
     console.log('Utilisateur connecté:', user);
-    window.location.href = '/dashboard'; // Redirige après connexion
+    window.location.href = '/admin'; // Redirige après connexion
   }
 }
 ---
@@ -30,4 +30,3 @@ async function handleLogin(event) {
     </form>
   </body>
 </html>
-
