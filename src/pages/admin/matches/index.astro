@@ -1,6 +1,11 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { getMatches } from '../../../lib/db/matches';
+import { protectRoute } from '../../../lib/auth';
+
+export const prerender = false;
+
+const session = await protectRoute(Astro);
 
 const matches = await getMatches();
 ---
