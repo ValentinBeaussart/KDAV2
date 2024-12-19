@@ -16,7 +16,7 @@ async function handleLogin(event) {
     console.error('Erreur de connexion:', error.message);
   } else {
     console.log('Utilisateur connecté:', user);
-    window.location.href = '/admin'; // Redirige après connexion
+    return Astro.redirect('/admin');
   }
 }
 ---
