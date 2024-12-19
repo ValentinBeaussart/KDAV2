@@ -14,5 +14,3 @@ export const createPlayer = async (player: Player) => {
     throw error;
   }
 };
-
-// ... autres fonctions de players

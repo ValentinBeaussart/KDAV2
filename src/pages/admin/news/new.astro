@@ -1,4 +1,5 @@
 ---
+<<<<<<< Updated upstream
 import Layout from '../../../layouts/Layout.astro';
 import ImageUpload from '../../../components/admin/ImageUpload.astro';
 import { protectRoute } from '../../../lib/auth';
@@ -6,6 +7,10 @@ import { protectRoute } from '../../../lib/auth';
 export const prerender = false;
 
 const session = await protectRoute(Astro);
+=======
+import Layout from "../../../layouts/Layout.astro";
+import ImageUpload from "../../../components/admin/ImageUpload.astro";
+>>>>>>> Stashed changes
 ---
 
 <Layout title="Ajouter une Actualité">
@@ -15,7 +20,9 @@ const session = await protectRoute(Astro);
     <form id="newsForm" class="bg-white rounded-lg shadow-lg p-6">
       <div class="space-y-6">
         <div>
-          <label for="title" class="block text-sm font-medium text-gray-700">Titre</label>
+          <label for="title" class="block text-sm font-medium text-gray-700"
+            >Titre</label
+          >
           <input
             type="text"
             id="title"
@@ -26,7 +33,9 @@ const session = await protectRoute(Astro);
         </div>
 
         <div>
-          <label for="summary" class="block text-sm font-medium text-gray-700">Résumé</label>
+          <label for="summary" class="block text-sm font-medium text-gray-700"
+            >Résumé</label
+          >
           <textarea
             id="summary"
             name="summary"
@@ -37,7 +46,9 @@ const session = await protectRoute(Astro);
         </div>
 
         <div>
-          <label for="content" class="block text-sm font-medium text-gray-700">Contenu</label>
+          <label for="content" class="block text-sm font-medium text-gray-700"
+            >Contenu</label
+          >
           <textarea
             id="content"
             name="content"
@@ -47,10 +58,20 @@ const session = await protectRoute(Astro);
           ></textarea>
         </div>
 
-        <ImageUpload
-          id="image"
-          label="Image de l'article"
-        />
+        <div>
+          <label
+            for="news_image"
+            class="block text-sm font-medium text-gray-700 mt-4"
+            >Image de l'article</label
+          >
+          <input
+            type="file"
+            id="news_image"
+            name="news_image"
+            accept="image/*"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+          />
+        </div>
 
         <div>
           <label class="flex items-center">
@@ -59,12 +80,13 @@ const session = await protectRoute(Astro);
               name="published"
               class="rounded border-gray-300 text-primary focus:ring-primary"
             />
-            <span class="ml-2 text-sm text-gray-700">Publier immédiatement</span>
+            <span class="ml-2 text-sm text-gray-700">Publier immédiatement</span
+            >
           </label>
         </div>
 
         <div class="flex justify-end space-x-4">
-          <a 
+          <a
             href="/admin/news"
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
           >
@@ -83,66 +105,67 @@ const session = await protectRoute(Astro);
 </Layout>
 
 <script>
-  document.getElementById('newsForm')?.addEventListener('submit', async (e) => {
+  import { supabase } from "../../../lib/supabaseClient";
+
+  document.getElementById("newsForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
+
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
-    
-    // Handle image upload
-    const imageFile = formData.get('image') as File;
+
+    const file = formData.get("news_image") as File;
+
+    // Vérifiez si un fichier a été sélectionné
     let imageUrl = null;
-
-    if (imageFile?.size > 0) {
-      const imageFormData = new FormData();
-      imageFormData.append('file', imageFile);
-
+    if (file) {
       try {
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: imageFormData
-        });
+        const fileName = `${Date.now()}_${file.name}`; // Nom unique pour l'image
+        const { data, error } = await supabase.storage
+          .from("Images") // Nom du bucket Supabase
+          .upload(fileName, file);
 
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image');
-        }
+        if (error) throw error;
 
-        const { url } = await uploadResponse.json();
-        imageUrl = url;
+        // Récupérez l'URL publique de l'image
+        const { data: publicUrlData } = supabase.storage
+          .from("Images")
+          .getPublicUrl(data.path);
+
+        imageUrl = publicUrlData.publicUrl;
       } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Error uploading image');
+        console.error("Error uploading image:", error);
+        alert("Erreur lors du téléchargement de l'image.");
         return;
       }
     }
-    
+
     const articleData = {
-      title: formData.get('title'),
-      summary: formData.get('summary'),
-      content: formData.get('content'),
+      title: formData.get("title"),
+      summary: formData.get("summary"),
+      content: formData.get("content"),
       image: imageUrl,
       date: new Date().toISOString(),
-      published: formData.get('published') === 'on'
+      published: formData.get("published") === "on",
     };
 
     try {
-      const response = await fetch('/api/news', {
-        method: 'POST',
+      const response = await fetch("/api/news", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(articleData),
       });
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Error creating article');
+        throw new Error(error.message || "Error creating article");
       }
 
-      window.location.href = '/admin/news';
+      window.location.href = "/admin/news";
     } catch (error) {
-      console.error('Error:', error);
-      alert(error instanceof Error ? error.message : 'Error creating article');
+      console.error("Error:", error);
+      alert(error instanceof Error ? error.message : "Error creating article");
     }
   });
 </script>

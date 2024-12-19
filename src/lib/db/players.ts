@@ -75,15 +75,12 @@ export const updatePlayer = async (id: number, player: Partial<Player>) => {
 
 export const deletePlayer = async (id: number) => {
   try {
-    // First delete related match_players records
     const { error: matchPlayerError } = await supabase
       .from('match_players')
       .delete()
       .eq('player_id', id);
 
     if (matchPlayerError) throw matchPlayerError;
-
-    // Then delete the player
     const { error } = await supabase
       .from('players')
       .delete()
