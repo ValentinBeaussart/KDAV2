@@ -1,7 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase'; // Assurez-vous que ce fichier initialise le client Supabase
 
+// Ne pas pré-rendre la page pour permettre la vérification dynamique de session
 export const prerender = false;
+
+// Récupérer la session utilisateur
+const { data: { session }, error } = await supabase.auth.getSession();
+
+if (!session) {
+  // Redirige vers la page de connexion si l'utilisateur n'est pas authentifié
+  return Astro.redirect('/login');
+}
 ---
 
 <Layout title="Administration">
