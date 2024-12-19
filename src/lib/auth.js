@@ -1,5 +1,5 @@
 
-import { supabase } from './supabase';
+import { supabase } from '/db/connection';
 
 export async function protectRoute(Astro) {
   const { data: { session } } = await supabase.auth.getSession();
