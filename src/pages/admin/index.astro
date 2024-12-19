@@ -1,6 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { supabase } from '../../lib/supabase'; // Assurez-vous que ce fichier initialise le client Supabase
+import { supabase } from '../../lib/connection'; // Assurez-vous que ce fichier initialise le client Supabase
 
 // Ne pas pré-rendre la page pour permettre la vérification dynamique de session
 export const prerender = false;
