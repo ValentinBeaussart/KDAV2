@@ -1,7 +1,11 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { getPlayers } from '../../../lib/db/players';
+import { protectRoute } from '../../../lib/auth';
 
+export const prerender = false;
+
+const session = await protectRoute(Astro);
 const players = await getPlayers();
 ---
 
