@@ -1,11 +1,18 @@
 ---
-import Layout from '../../../layouts/Layout.astro';
-import { getMatches } from '../../../lib/db/matches';
-import { protectRoute } from '../../../lib/auth';
+import Layout from "../../../layouts/Layout.astro";
+import { getMatches } from "../../../lib/db/matches";
+import { protectRoute } from "../../../lib/auth";
 
 export const prerender = false;
 
 const session = await protectRoute(Astro);
+console.log(session, "toto");
+console.log("tototo");
+
+if (!session) {
+  return Astro.redirect("/login");
+}
+console.log("toto");
 
 const matches = await getMatches();
 ---
@@ -14,8 +21,8 @@ const matches = await getMatches();
   <div class="max-w-4xl mx-auto py-8">
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-primary">Gestion des Matchs</h1>
-      <a 
-        href="/admin/matches/new" 
+      <a
+        href="/admin/matches/new"
         class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
       >
         Ajouter un match
@@ -26,56 +33,80 @@ const matches = await getMatches();
       <table class="min-w-full">
         <thead class="bg-gray-50">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adversaire</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Score</th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Date</th
+            >
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Adversaire</th
+            >
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Type</th
+            >
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Score</th
+            >
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+              >Actions</th
+            >
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          {matches && matches.map((match) => (
-            <tr>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {new Date(match.date).toLocaleDateString('fr-FR')} {match.time}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {match.opponent_name}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {match.match_type === 'MCDO_POOL' ? 'Poule McDo' :
-                 match.match_type === 'FRIENDLY' ? 'Amical' :
-                 match.match_type === 'CUP' ? 'Coupe' : 'Champ Cup'}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {match.is_completed ? 
-                  `${match.home_score ?? 0} - ${match.away_score ?? 0}` : 
-                  'Non joué'
-                }
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <a 
-                  href={`/admin/matches/${match.id}/edit`}
-                  class="text-primary hover:text-opacity-80 mr-4"
-                >
-                  Modifier
-                </a>
-                <button
-                  data-match-id={match.id}
-                  class="text-red-600 hover:text-red-800 delete-match"
-                >
-                  Supprimer
-                </button>
-              </td>
-            </tr>
-          ))}
-          {(!matches || matches.length === 0) && (
-            <tr>
-              <td colspan="5" class="px-6 py-4 text-center text-gray-500">
-                Aucun match n'a été créé
-              </td>
-            </tr>
-          )}
+          {
+            matches &&
+              matches.map((match) => (
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(match.date).toLocaleDateString("fr-FR")}{" "}
+                    {match.time}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {match.opponent_name}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {match.match_type === "MCDO_POOL"
+                      ? "Poule McDo"
+                      : match.match_type === "FRIENDLY"
+                        ? "Amical"
+                        : match.match_type === "CUP"
+                          ? "Coupe"
+                          : "Champ Cup"}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {match.is_completed
+                      ? `${match.home_score ?? 0} - ${match.away_score ?? 0}`
+                      : "Non joué"}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a
+                      href={`/admin/matches/${match.id}/edit`}
+                      class="text-primary hover:text-opacity-80 mr-4"
+                    >
+                      Modifier
+                    </a>
+                    <button
+                      data-match-id={match.id}
+                      class="text-red-600 hover:text-red-800 delete-match"
+                    >
+                      Supprimer
+                    </button>
+                  </td>
+                </tr>
+              ))
+          }
+          {
+            (!matches || matches.length === 0) && (
+              <tr>
+                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                  Aucun match n'a été créé
+                </td>
+              </tr>
+            )
+          }
         </tbody>
       </table>
     </div>
@@ -83,26 +114,28 @@ const matches = await getMatches();
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.delete-match').forEach(button => {
-      button.addEventListener('click', async (e) => {
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".delete-match").forEach((button) => {
+      button.addEventListener("click", async (e) => {
         const matchId = (e.target as HTMLButtonElement).dataset.matchId;
-        
-        if (confirm('Êtes-vous sûr de vouloir supprimer ce match ?')) {
+
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce match ?")) {
           try {
             const response = await fetch(`/api/matches/${matchId}`, {
-              method: 'DELETE',
+              method: "DELETE",
             });
 
             if (!response.ok) {
               const error = await response.json();
-              throw new Error(error.message || 'Error deleting match');
+              throw new Error(error.message || "Error deleting match");
             }
 
             window.location.reload();
           } catch (error) {
-            console.error('Error:', error);
-            alert(error instanceof Error ? error.message : 'Error deleting match');
+            console.error("Error:", error);
+            alert(
+              error instanceof Error ? error.message : "Error deleting match"
+            );
           }
         }
       });

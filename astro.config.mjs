@@ -7,4 +7,5 @@ export default defineConfig({
   output: "server",
   adapter: netlify(),
   site: "https://kda-sporting.netlify.app",
+  mode: 'production',
 });
