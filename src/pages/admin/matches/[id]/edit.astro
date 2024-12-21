@@ -4,11 +4,11 @@ import { getMatch } from '../../../../lib/db/matches';
 import { getMatchPlayers } from '../../../../lib/db/match-players';
 import { getPlayers } from '../../../../lib/db/players';
 import { getClubs } from '../../../../lib/db/clubs';
-import { protectRoute } from '../../../../lib/auth';
+import { protectRoute } from "../../../../lib/auth";
 
 export const prerender = false;
 
-const session = await protectRoute(Astro);
+await protectRoute(Astro);
 
 const { id } = Astro.params;
 const matchId = parseInt(id);

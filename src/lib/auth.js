@@ -1,12 +1,28 @@
+export function isAuthenticated(username, password) {
+  const envUsername = import.meta.env.ADMIN_USERNAME;
+  const envPassword = import.meta.env.ADMIN_PASSWORD;
 
-import { supabase } from './db/connection';
+  // Vérifiez si les identifiants fournis correspondent à ceux dans le fichier .env
+  return username === envUsername && password === envPassword;
+}
+export function protectRoute(Astro) {
+  console.log('Vérification de la session');
 
-export async function protectRoute(Astro) {
-  const { data: { session } } = await supabase.auth.getSession();
+  // Récupérer tous les cookies
+  const cookies = Astro.request.headers.get("cookie") || "";
+  
+  // Trouver le cookie de session
+  const sessionCookie = cookies.split("; ").find((c) => c.startsWith("session="));
+  
+  // Extraire la valeur du cookie de session
+  const sessionValue = sessionCookie ? sessionCookie.split("=")[1] : null;
 
-  if (!session) {
-    return Astro.redirect('/login');
+  // Vérifier si la session est valide
+  if (!sessionValue || sessionValue !== "valid") {
+    console.log('Redirection : session invalide ou inexistante');
+    return Astro.redirect("/login");
   }
 
-  return session;
+  console.log('Session valide : accès autorisé');
 }
+

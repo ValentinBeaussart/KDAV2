@@ -1,14 +1,13 @@
-
 <html>
   <body class="bg-gray-100 flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
       <h2 class="text-2xl font-semibold text-center text-primary mb-6">Se connecter</h2>
-      <form>
+      <form id="login-form">
         <div class="space-y-4">
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
             <input
-              type="email"
+              type="text"
               name="email"
               id="email"
               placeholder="Entrez votre email"
@@ -29,7 +28,6 @@
             />
           </div>
 
-
           <div>
             <button
               type="submit"
@@ -43,12 +41,26 @@
     </div>
 
     <script type="module">
-      import { handleLogin } from './src/lib/login.js';
+      async function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
 
-      document.querySelector("form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        handleLogin(e);
-      });
+        console.log("Email :", email, "Password :", password);
+
+        const adminEmail = "napoleonbonaparte"; 
+        const adminPassword = "15081769"; 
+
+        if (email === adminEmail && password === adminPassword) {
+          alert("Connexion réussie !");
+          document.cookie = "session=valid; path=/; max-age=3600; Secure";
+          window.location.href = "/admin";
+        } else {
+          alert("Email ou mot de passe incorrect !");
+        }
+      }
+
+      document.getElementById("login-form").addEventListener("submit", handleLogin);
     </script>
   </body>
 </html>

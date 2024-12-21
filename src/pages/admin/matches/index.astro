@@ -5,14 +5,7 @@ import { protectRoute } from "../../../lib/auth";
 
 export const prerender = false;
 
-const session = await protectRoute(Astro);
-console.log(session, "toto");
-console.log("tototo");
-
-if (!session) {
-  return Astro.redirect("/login");
-}
-console.log("toto");
+await protectRoute(Astro);
 
 const matches = await getMatches();
 ---

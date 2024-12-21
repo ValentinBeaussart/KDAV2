@@ -2,11 +2,11 @@
 import Layout from '../../../../layouts/Layout.astro';
 import ImageUpload from '../../../../components/admin/ImageUpload.astro';
 import { getNewsArticle } from '../../../../lib/data/news';
-import { protectRoute } from '../../../../lib/auth';
+import { protectRoute } from "../../../../lib/auth";
 
 export const prerender = false;
 
-const session = await protectRoute(Astro);
+await protectRoute(Astro);
 
 const { id } = Astro.params;
 const articleId = parseInt(id);
