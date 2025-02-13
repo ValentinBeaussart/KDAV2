@@ -1,6 +1,11 @@
 export interface Database {
   public: {
     Tables: {
+      seasons: {
+        Row: Season;
+        Insert: Omit<Season, 'id' | 'created_at'>;
+        Update: Partial<Omit<Season, 'id' | 'created_at'>>;
+      };
       clubs: {
         Row: Club;
         Insert: Omit<Club, 'id' | 'created_at' | 'updated_at'>;
@@ -30,10 +35,18 @@ export interface Database {
   };
 }
 
+export interface Season {
+  id: number;
+  start_year: number;
+  end_year: number;
+  created_at?: string;
+}
+
 export interface Club {
   id: number;
   name: string;
   logo?: string | null;
+  season_id: number;
   played: number;
   won: number;
   drawn: number;
@@ -52,6 +65,7 @@ export interface Player {
   number: string;
   position: string;
   photo?: string | null;
+  season_id: number;
   appearances: number;
   goals: number;
   assists: number;
@@ -61,6 +75,7 @@ export interface Player {
 
 export interface Match {
   id: number;
+  season_id: number;
   date: string;
   time: string;
   location: string;
