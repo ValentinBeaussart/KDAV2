@@ -1,8 +1,16 @@
 export const schema = `
+  CREATE TABLE IF NOT EXISTS seasons (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    start_year INTEGER NOT NULL,  -- Ex: 2024
+    end_year INTEGER NOT NULL,    -- Ex: 2025
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
   CREATE TABLE IF NOT EXISTS clubs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     logo TEXT,
+    season_id INTEGER NOT NULL,
     played INTEGER DEFAULT 0,
     won INTEGER DEFAULT 0,
     drawn INTEGER DEFAULT 0,
@@ -11,7 +19,8 @@ export const schema = `
     goals_against INTEGER DEFAULT 0,
     points INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (season_id) REFERENCES seasons(id) ON DELETE CASCADE
   );
 
   CREATE TABLE IF NOT EXISTS players (
@@ -20,15 +29,18 @@ export const schema = `
     number TEXT NOT NULL,
     position TEXT NOT NULL,
     photo TEXT,
+    season_id INTEGER NOT NULL,
     appearances INTEGER DEFAULT 0,
     goals INTEGER DEFAULT 0,
     assists INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (season_id) REFERENCES seasons(id) ON DELETE CASCADE
   );
 
   CREATE TABLE IF NOT EXISTS matches (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    season_id INTEGER NOT NULL,
     date TEXT NOT NULL,
     time TEXT NOT NULL,
     location TEXT NOT NULL,
@@ -43,6 +55,7 @@ export const schema = `
     lineup_image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (season_id) REFERENCES seasons(id) ON DELETE CASCADE,
     FOREIGN KEY (opponent_club_id) REFERENCES clubs(id)
   );
 
@@ -104,6 +117,9 @@ export const schema = `
 `;
 
 export const initialData = `
-  INSERT OR IGNORE INTO clubs (id, name, logo)
-  VALUES (1, 'KDA Sporting Club', '/kda.jpg');
+  INSERT OR IGNORE INTO seasons (start_year, end_year)
+  VALUES (2024, 2025);
+
+  INSERT OR IGNORE INTO clubs (id, name, logo, season_id)
+  VALUES (1, 'KDA Sporting Club', '/kda.jpg', 1);
 `;
