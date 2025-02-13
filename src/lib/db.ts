@@ -14,6 +14,7 @@ export * from './db/players';
 export * from './db/matches';
 export * from './db/match-players';
 export * from './db/news';
+export * from './db/seasons';
 
 // Export the database connection
 export { supabase };
