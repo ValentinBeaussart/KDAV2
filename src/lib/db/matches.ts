@@ -17,7 +17,8 @@ export const createMatch = async (match: Omit<Match, 'id'>) => {
         is_completed: match.is_completed,
         match_type: match.match_type,
         competition_round: match.competition_round || null,
-        lineup_image: match.lineup_image || null
+        lineup_image: match.lineup_image || null,
+        season_id: match.season_id // ✅ Ajout du season_id
       })
       .select()
       .single();
@@ -30,7 +31,7 @@ export const createMatch = async (match: Omit<Match, 'id'>) => {
   }
 };
 
-export const getMatches = async () => {
+export const getMatches = async (season_id: number) => {
   try {
     const { data, error } = await supabase
       .from('matches')
@@ -47,8 +48,10 @@ export const getMatches = async () => {
         is_completed,
         match_type,
         competition_round,
-        lineup_image
+        lineup_image,
+        season_id
       `)
+      .eq('season_id', season_id) // ✅ Filtrer par saison
       .order('date', { ascending: false });
 
     if (error) throw error;
@@ -77,9 +80,12 @@ export const getMatch = async (id: number) => {
 
 export const updateMatch = async (id: number, match: Partial<Match>) => {
   try {
+    // ✅ Empêcher la modification de `season_id`
+    const { season_id, ...allowedUpdates } = match; 
+
     const { data, error } = await supabase
       .from('matches')
-      .update(match)
+      .update(allowedUpdates)
       .eq('id', id)
       .select()
       .single();
