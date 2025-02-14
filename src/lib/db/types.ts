@@ -39,7 +39,6 @@ export interface Season {
   id: number;
   start_year: number;
   end_year: number;
-  created_at?: string;
 }
 
 export interface Club {
@@ -99,6 +98,7 @@ export interface MatchPlayer {
   assists: number;
   created_at?: string;
   updated_at?: string;
+  season_id: number;
 }
 
 export interface NewsArticle {

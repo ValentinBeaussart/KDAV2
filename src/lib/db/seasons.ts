@@ -20,6 +20,23 @@ export const createSeason = async (season: Omit<Season, 'id' | 'created_at'>) =>
   }
 };
 
+export const getCurrentSeason = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('seasons')
+      .select('id')
+      .order('start_date', { ascending: false }) // Trie pour prendre la plus récente
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+    return data?.id;
+  } catch (error) {
+    console.error('Error getting current season:', error);
+    throw error;
+  }
+};
+
 export const getSeasons = async () => {
   try {
     const { data, error } = await supabase

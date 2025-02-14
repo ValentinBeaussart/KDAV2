@@ -13,7 +13,7 @@ export const createPlayer = async (player: Omit<Player, 'id'>) => {
         appearances: player.appearances || 0,
         goals: player.goals || 0,
         assists: player.assists || 0,
-        season_id: player.season_id // ✅ Ajout du season_id
+        season_id: player.season_id
       })
       .select()
       .single();

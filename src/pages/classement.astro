@@ -2,8 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import StandingsTable from '../components/standings/StandingsTable.astro';
 import { getMcDoClubs } from '../lib/db/clubs';
+import { getCurrentSeason } from '../lib/db/seasons';
 
-const clubs = await getMcDoClubs();
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
+
+const clubs = await getMcDoClubs(season_id);
 
 // Sort clubs by points, goal difference, and goals scored
 const sortedClubs = clubs 

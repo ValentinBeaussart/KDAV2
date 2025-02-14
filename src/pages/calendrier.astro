@@ -3,12 +3,19 @@ import Layout from "../layouts/Layout.astro";
 import MatchCard from "../components/calendar/MatchCard.astro";
 import { getMatches } from "../lib/db/matches";
 import { getClub, getClubs } from "../lib/db/clubs";
+import { getCurrentSeason } from '../lib/db/seasons';
 
-const matches = await getMatches();
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
+
+const matches = await getMatches(season_id);
 const kdaClub = await getClub(1);
 
 // Récupérer tous les clubs pour créer une map des logos
-const allClubs = await getClubs();
+const allClubs = await getClubs(season_id);
 const clubLogoMap = new Map(allClubs.map((club) => [club.id, club.logo || "/default-logo.jpg"]));
 
 const pastMatches = matches

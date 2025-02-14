@@ -3,6 +3,13 @@ import Layout from '../../../layouts/Layout.astro';
 import { getMatch } from '../../../lib/db/matches';
 import { getMatchPlayers } from '../../../lib/db/match-players';
 import { getPlayers } from '../../../lib/db/players';
+import { getCurrentSeason } from '../../../lib/db/seasons';
+
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
 
 export const prerender = false;
 
@@ -25,7 +32,7 @@ try {
     return Astro.redirect('/calendrier');
   }
 
-  const allPlayers = await getPlayers();
+  const allPlayers = await getPlayers(season_id);
   const matchPlayers = await getMatchPlayers(matchId);
 
   // Get scorers for this match

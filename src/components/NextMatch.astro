@@ -1,7 +1,13 @@
 ---
 import { getMatches } from "../lib/db";
+import { getCurrentSeason } from '../lib/db/seasons';
 
-const matches = await getMatches();
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
+const matches = await getMatches(season_id);
 
 const nextMatch = matches
   ?.filter((match) => !match.is_completed)

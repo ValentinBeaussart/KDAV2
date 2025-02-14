@@ -9,7 +9,8 @@ export const addPlayerToMatch = async (matchPlayer: MatchPlayer) => {
         match_id: matchPlayer.match_id,
         player_id: matchPlayer.player_id,
         goals: matchPlayer.goals || 0,
-        assists: matchPlayer.assists || 0
+        assists: matchPlayer.assists || 0,
+        season_id: matchPlayer.season_id // ✅ Ajout du season_id
       })
       .select()
       .single();
@@ -33,7 +34,8 @@ export const getMatchPlayers = async (matchId: number) => {
           name,
           number,
           position,
-          photo
+          photo,
+          season_id
         )
       `)
       .eq('match_id', matchId);

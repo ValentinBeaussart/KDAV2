@@ -2,8 +2,15 @@
 import Layout from '../layouts/Layout.astro';
 import PlayerCard from '../components/team/PlayerCard.astro';
 import { getPlayers } from '../lib/db/players';
+import { getCurrentSeason } from '../lib/db/seasons';
 
-const players = await getPlayers();
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
+
+const players = await getPlayers(season_id);
 ---
 
 <Layout title="Équipe">
