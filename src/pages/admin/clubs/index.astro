@@ -2,12 +2,19 @@
 import Layout from '../../../layouts/Layout.astro';
 import { getClubs } from '../../../lib/db/clubs';
 import { protectRoute } from "../../../lib/auth";
+import { getCurrentSeason } from '../../../lib/db/seasons';
+
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
 
 export const prerender = false;
 
 await protectRoute(Astro);
 
-const clubs = await getClubs();
+const clubs = await getClubs(season_id);
 ---
 
 <Layout title="Gestion des Clubs">

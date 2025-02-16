@@ -5,6 +5,13 @@ import { getMatchPlayers } from '../../../../lib/db/match-players';
 import { getPlayers } from '../../../../lib/db/players';
 import { getClubs } from '../../../../lib/db/clubs';
 import { protectRoute } from "../../../../lib/auth";
+import { getCurrentSeason } from '../../../../lib/db/seasons';
+
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
 
 export const prerender = false;
 
@@ -18,9 +25,9 @@ if (!match) {
   return Astro.redirect('/admin/matches');
 }
 
-const allPlayers = await getPlayers();
+const allPlayers = await getPlayers(season_id);
 const matchPlayers = await getMatchPlayers(matchId);
-const clubs = await getClubs();
+const clubs = await getClubs(season_id);
 const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
 
 const playerDetails = matchPlayers.map(mp => {

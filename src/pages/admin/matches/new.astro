@@ -3,13 +3,20 @@ import Layout from '../../../layouts/Layout.astro';
 import { getPlayers } from '../../../lib/db/players';
 import { getClubs } from '../../../lib/db/clubs';
 import { protectRoute } from "../../../lib/auth";
+import { getCurrentSeason } from '../../../lib/db/seasons';
+
+const season_id = await getCurrentSeason();
+
+if (!season_id) {
+  throw new Error('Aucune saison en cours trouvée.');
+}
 
 export const prerender = false;
 
 await protectRoute(Astro);
 
-const players = await getPlayers();
-const clubs = await getClubs();
+const players = await getPlayers(season_id);
+const clubs = await getClubs(season_id);
 const opponentClubs = clubs.filter(club => club.id !== 1); // Exclude KDA
 ---
 
